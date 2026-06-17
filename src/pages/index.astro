@@ -1,0 +1,257 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ServiceAreaMap from '@components/ServiceAreaMap.astro';
+import FaqSection from '@components/FaqSection.astro';
+import FinalCta from '@components/FinalCta.astro';
+import QuoteForm from '@components/QuoteForm.astro';
+import CityLinks from '@components/CityLinks.astro';
+import { SITE, tel } from '@config/site';
+import { SERVICES, type Faq } from '@config/services';
+import { serviceUrl } from '../lib/urls';
+import { defaultHero } from '../lib/images';
+import { faqPage } from '../lib/schema';
+
+const title = `${SITE.region} Mobile Brake Repair — Pads, Rotors & More`;
+const description = `Mobile brake repair in ${SITE.region}: brake pads, rotors, calipers, fluid flushes, and inspections. We come to your home or work and do the brake job in your driveway. Call ${SITE.phoneDisplay} for a fast quote.`;
+
+// Homepage FAQs (rendered + FAQ schema via FaqSection / faqPage).
+const homeFaqs: Faq[] = [
+  {
+    q: 'Are you really mobile — you come to me?',
+    a: 'Yes. We are a fully mobile brake shop. We bring the pads, rotors, fluid, and tools to your home, work, or wherever the vehicle is parked anywhere in San Antonio and do the brake job there. There is no shop to drive to and no waiting room.',
+  },
+  {
+    q: 'What brake work do you do?',
+    a: 'Brake pads, rotors, calipers, brake fluid flushes, brake hoses, and full inspections, on cars, trucks, and SUVs. If you are hearing a squeal or grind, feeling a pulse or a soft pedal, or seeing a brake light, one call covers it.',
+  },
+  {
+    q: 'How do I get a quote?',
+    a: 'Call us with your vehicle year, make, and model and a quick description of what the brakes are doing — squeaking, grinding, a soft or pulsing pedal, a warning light. That is usually enough for a straight price over the phone. You can also send details through the quote form.',
+  },
+  {
+    q: 'Can you come the same day?',
+    a: 'Same-day availability is often possible, especially for urgent problems like grinding, a soft pedal, or a brake warning light. Ask when you call and we will give you a real time — not a runaround.',
+  },
+  {
+    q: 'My brakes are grinding — is that urgent?',
+    a: 'Yes. Grinding usually means the pads are gone and metal is cutting into the rotor, so your stopping distance is longer and the rotors are being damaged every mile. Get it looked at right away — it is cheaper and far safer than driving on it.',
+  },
+  {
+    q: 'What areas do you cover?',
+    a: 'San Antonio, Stone Oak, Alamo Heights, Helotes, Leon Valley, Converse, Schertz, Universal City, Live Oak, Cibolo, Boerne, and the surrounding communities. If you are not sure we reach you, call and ask — we likely do.',
+  },
+];
+
+const jsonLd = faqPage(homeFaqs) ?? [];
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <!-- 1. Simple bold headline — no background image, no subtext -->
+  <section class="lp-hero">
+    <div class="container">
+      <h1>Mobile Brake Repair in {SITE.region}</h1>
+    </div>
+  </section>
+
+  <!-- 2. Photo + quote form -->
+  <section class="section-sm">
+    <div class="container split">
+      <div class="lp-photo">
+        <Image
+          src={defaultHero}
+          alt={`Mobile brake repair in ${SITE.region}`}
+          widths={[480, 760, 1000]}
+          sizes="(max-width: 920px) 100vw, 560px"
+          fetchpriority="high"
+          loading="eager"
+        />
+      </div>
+      <QuoteForm source="home-hero" />
+    </div>
+  </section>
+
+  <!-- 3. Intro / About -->
+  <section class="section section-soft" id="about">
+    <div class="container prose">
+      <h2>We Fix Brakes — At Your Home or Work.</h2>
+      <p>
+        We’re a mobile brake crew serving {SITE.region} and the surrounding communities. Squealing
+        or grinding pads, a pedal that pulses or feels soft, a car that pulls when you stop, or a
+        brake light on the dash — we handle the whole range on cars, trucks, and SUVs, and we bring
+        it to wherever the vehicle is parked.
+      </p>
+      <p>
+        In a city this spread out, you shouldn’t have to crawl Loop 410 or I-35 to a shop and lose
+        your car for the day. Tell us your year, make, and model and what the brakes are doing, and
+        we’ll give you a straight quote and a real time.
+      </p>
+      <ul class="checklist">
+        <li>Brake pad &amp; rotor replacement</li>
+        <li>Brake caliper repair &amp; replacement</li>
+        <li>Brake fluid flushes for a firm pedal</li>
+        <li>Full brake inspections — pads, rotors, calipers &amp; fluid</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3. What We Fix — a section per service (alternating rows) -->
+  <section class="section section-soft" id="services">
+    <div class="container">
+      <div class="section-head">
+        <h2>What We Fix</h2>
+        <p class="lead muted">
+          From squealing pads to a pulsing pedal or a soft brake, here’s what we handle for
+          {SITE.region} drivers.
+        </p>
+      </div>
+
+      {SERVICES.map((s, i) => (
+        <div class:list={['srow', { reverse: i % 2 === 1 }]}>
+          <div class="srow-media">
+            <a href={serviceUrl(s)}>
+              <Image
+                src={s.image}
+                alt={s.imageAlt}
+                widths={[480, 720, 960]}
+                sizes="(max-width: 920px) 100vw, 500px"
+                loading="lazy"
+                style="border-radius:var(--radius);width:100%;"
+              />
+            </a>
+          </div>
+          <div class="srow-body">
+            {s.emergency && <span class="badge">Emergency</span>}
+            <h3><a href={serviceUrl(s)}>{s.name}</a></h3>
+            <p>{s.description}</p>
+            <p class="srow-actions">
+              <a class="btn btn-primary" href={serviceUrl(s)}>More on {s.short} →</a>
+              <a class="btn btn-call" href={tel()}>Call {SITE.phoneDisplay}</a>
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 4. Mobile Service Across San Antonio (maps + coverage) -->
+  <ServiceAreaMap />
+
+  <!-- 5. Brakes Grinding or Pedal Soft? — safety urgency -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Brakes Grinding or Pedal to the Floor? Don’t Wait.</h2>
+        <p class="lead muted">
+          Brakes aren’t something to gamble on. A few symptoms mean you should stop driving and call
+          today — every mile makes them worse and less safe.
+        </p>
+      </div>
+      <div class="issue-grid">
+        <div class="card">
+          <h3>Grinding means metal on metal</h3>
+          <p class="muted">
+            A grind when you brake usually means the pads are gone and metal is cutting into the
+            rotor. Stopping distances get longer and the rotors are damaged every mile. We get you
+            back to safe, quiet stops.
+          </p>
+        </div>
+        <div class="card">
+          <h3>A soft pedal is a warning</h3>
+          <p class="muted">
+            A pedal that sinks or feels spongy points to old fluid, air, or a leak — and in the
+            Texas heat, contaminated fluid can fade right when you need to stop. We flush the system
+            and find any leak.
+          </p>
+        </div>
+        <div class="card">
+          <h3>A pull or burning smell can’t wait</h3>
+          <p class="muted">
+            A car that pulls when braking, a wheel running hot, or a burning smell often means a
+            stuck caliper dragging the brake. That builds heat fast and can warp a rotor — we
+            diagnose and fix it on-site.
+          </p>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:24px;">
+        <a class="btn btn-call btn-lg" href={tel()}>Call {SITE.phoneDisplay}</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 6. How It Works -->
+  <section class="section section-soft">
+    <div class="container">
+      <div class="section-head">
+        <h2>How It Works</h2>
+        <p class="lead muted">Three steps, no runaround.</p>
+      </div>
+      <div class="issue-grid">
+        <div class="card">
+          <h3>1. Call or request a quote</h3>
+          <p class="muted">
+            Call {SITE.phoneDisplay} or send the quote form. Tell us where the vehicle is parked and
+            we’ll give you a straight price and a real time.
+          </p>
+        </div>
+        <div class="card">
+          <h3>2. Tell us your vehicle &amp; the symptom</h3>
+          <p class="muted">
+            Give us the year, make, and model and what’s wrong — squealing, grinding, a pulsing or
+            soft pedal, a warning light. That’s usually enough for an honest quote.
+          </p>
+        </div>
+        <div class="card">
+          <h3>3. We come to you</h3>
+          <p class="muted">
+            We meet the vehicle at your home, work, or wherever it’s parked and do the brake work
+            on-site — most jobs in one visit, and we show you the worn parts before we replace them.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Service area list -->
+  <CityLinks
+    title={`Service Area — Across ${SITE.region} & the Surrounding Communities`}
+    sub="Mobile brake repair for every part of the San Antonio area we cover."
+  />
+
+  <!-- 8. FAQ -->
+  <FaqSection faqs={homeFaqs} title="Questions We Hear a Lot" />
+
+  <!-- Final CTA -->
+  <FinalCta />
+</BaseLayout>
+
+<style>
+  .srow-body .badge {
+    display: inline-block;
+    background: #b42318;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+  }
+  .srow-body h3 {
+    font-size: 1.35rem;
+    margin-bottom: 8px;
+  }
+  .srow-body h3 a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .srow-body h3 a:hover {
+    color: var(--green-dark);
+  }
+  .srow-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+</style>
