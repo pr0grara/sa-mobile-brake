@@ -1,6 +1,6 @@
 {
   "name": "sa-mobile-brake",
-  "description": "Lead-gen site for Alamo Mobile Brake Repair — mobile brake repair & service across San Antonio.",
+  "description": "Lead-gen site for Alamo Mobile Brake Repair \u2014 mobile brake repair & service across San Antonio.",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -12,7 +12,8 @@
     "build": "astro build",
     "check": "astro check",
     "preview": "astro preview",
-    "deploy": "astro build && npx wrangler deploy"
+    "deploy": "astro build && npx wrangler deploy",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
